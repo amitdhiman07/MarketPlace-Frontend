@@ -1,0 +1,238 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.modal-content {
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 24rem; /* Narrower than ProductListing (90vw) */
+    width: 100%;
+    max-height: 90vh; /* Prevent vertical overflow */
+    overflow-y: auto; /* Scrollable content */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    animation: slideIn 0.5s ease-out forwards;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 0.2s;
+}
+
+.sign-in-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards;
+    animation-delay: calc(0.3s + var(--form-group-index) * 0.1s);
+}
+
+.form-group label {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0f172a;
+}
+
+.toggle-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #0f172a;
+    cursor: pointer;
+}
+
+.toggle-input {
+    display: none;
+}
+
+.toggle-slider {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #ffffff;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s ease;
+}
+
+.toggle-input:checked + .toggle-slider {
+    background: #1f2a44;
+}
+
+.toggle-input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
+
+.toggle-label:hover .toggle-slider {
+    background: #f97316;
+}
+
+.toggle-input:checked + .toggle-slider:hover {
+    background: #151b2f;
+}
+
+.search-input {
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: #0f172a;
+    transition: all 0.3s ease;
+    width: 100%; /* Prevent overflow */
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    border-color: #1f2a44;
+    box-shadow: 0 0 0 3px rgba(31, 42, 68, 0.1);
+    outline: none;
+}
+
+.modal-sign-in-button {
+    background: #1f2a44;
+    color: #ffffff;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 0.5s;
+}
+
+.modal-sign-in-button:hover {
+    background: #151b2f;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.close-button {
+    margin-top: 1rem;
+    background: #ffffff;
+    color: #1f2a44;
+    border: 1px solid #1f2a44;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 0.6s;
+}
+
+.close-button:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 1rem;
+        max-width: 95vw;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+    }
+
+    .form-group label,
+    .toggle-label {
+        font-size: 0.875rem;
+    }
+
+    .search-input {
+        font-size: 0.875rem;
+        padding: 0.5rem;
+    }
+
+    .modal-sign-in-button,
+    .close-button {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .toggle-slider {
+        width: 36px;
+        height: 18px;
+    }
+
+    .toggle-slider::before {
+        width: 14px;
+        height: 14px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .toggle-input:checked + .toggle-slider::before {
+        transform: translateX(18px);
+    }
+}

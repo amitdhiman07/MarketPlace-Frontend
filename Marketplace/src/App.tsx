@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import SignIn from './pages/signIn/signin.tsx';
+import ProductListing from './pages/productListing/productListing.tsx';
 import './App.css';
 
 // Generate 100 dummy listings
@@ -9,6 +11,7 @@ const dummyListings = Array.from({ length: 100 }, (_, index) => ({
         'Designer Handbag', 'Mountain Bike', 'Coffee Table', 'Headphones',
         'Office Chair', 'Camera Lens'
     ][index % 10],
+    image : ['/assests/react.svg'],
     price: `$${Math.floor(50 + Math.random() * 2000)}`,
     location: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco',
         'Boston', 'Seattle', 'Austin', 'Denver', 'Portland'][index % 10],
@@ -29,6 +32,8 @@ function App() {
     const [category, setCategory] = useState('');
     const [location, setLocation] = useState('');
     const [isSticky, setIsSticky] = useState(false);
+    const [isSignInOpen, setIsSignInOpen] = useState(false);
+    const [isProductListingOpen, setIsProductListingOpen] = useState(false);
     const searchBarRef = useRef(null);
     const headerRef = useRef(null);
 
@@ -38,7 +43,6 @@ function App() {
                 const { top } = searchBarRef.current.getBoundingClientRect();
                 const headerHeight = headerRef.current.offsetHeight;
                 const scrollPosition = window.scrollY;
-                // Reset to initial position when near the top (within 50px)
                 if (scrollPosition <= 50) {
                     setIsSticky(false);
                 } else {
@@ -101,15 +105,29 @@ function App() {
                         </div>
                     </div>
                     <div className="cta-buttons">
-                        <button className="cta-button post-listing">
+                        <button
+                            className="cta-button post-listing"
+                            onClick={() => setIsProductListingOpen(true)}
+                        >
                             Post a Listing
                         </button>
-                        <button className="cta-button sign-in">
+                        <button
+                            className="cta-button sign-in"
+                            onClick={() => setIsSignInOpen(true)}
+                        >
                             Sign In
                         </button>
                     </div>
                 </div>
             </div>
+
+            {/* Sign In Modal */}
+            {isSignInOpen && <SignIn onClose={() => setIsSignInOpen(false)} />}
+
+            {/* Product Listing Modal */}
+            {isProductListingOpen && (
+                <ProductListing onClose={() => setIsProductListingOpen(false)} />
+            )}
 
             {/* Tagline */}
             <p className="tagline">
@@ -153,7 +171,7 @@ function App() {
                 <button className="search-button">🔍</button>
             </div>
 
-            {/* All Categories Section (below search bar when not sticky) */}
+            {/* All Categories Section */}
             <div className={`categories-section ${isSticky ? 'hidden' : ''}`}>
                 <h2 className="categories-title">All Categories</h2>
                 <div className="categories-grid">
