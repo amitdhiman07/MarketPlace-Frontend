@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import SignIn from './pages/signIn/signin.tsx';
+import Register from './pages/registeration/register.tsx';
 import ProductListing from './pages/productListing/productListing.tsx';
 import './App.css';
 
@@ -13,8 +14,11 @@ const categories = [
     { name: 'Vehicles', icon: '🚗' },
 ];
 
-// Locations for filters
-const locations = ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco', 'Boston', 'Seattle', 'Austin', 'Denver', 'Portland'];
+// Locations for filters (India-focused)
+const locations = [
+    'Mumbai', 'Delhi', 'Bengaluru', 'Hyderabad', 'Ahmedabad',
+    'Chennai', 'Kolkata', 'Pune', 'Jaipur', 'Lucknow'
+];
 
 // Generate 100 dummy listings with images, categories, ratings, actions
 const dummyListings = Array.from({ length: 100 }, (_, index) => ({
@@ -25,7 +29,7 @@ const dummyListings = Array.from({ length: 100 }, (_, index) => ({
         'Office Chair', 'Camera Lens'
     ][index % 10],
     image: `https://picsum.photos/300/200?random=${index + 1}`,
-    price: `$${Math.floor(50 + Math.random() * 2000)}`,
+    price: `₹${Math.floor(1000 + Math.random() * 50000)}`,
     location: locations[index % 10],
     category: ['Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Books', 'Vehicles'][Math.floor(index % 6)],
     rating: Math.random() * 5,
@@ -38,8 +42,10 @@ function App() {
     const [location, setLocation] = useState('');
     const [isSticky, setIsSticky] = useState(false);
     const [isSignInOpen, setIsSignInOpen] = useState(false);
+    const [isRegisterOpen, setIsRegisterOpen] = useState(false);
     const [isProductListingOpen, setIsProductListingOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
     const [action, setAction] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [minPrice, setMinPrice] = useState('');
@@ -108,6 +114,17 @@ function App() {
         .filter(listing => popularCategories.includes(listing.category))
         .slice(0, 4);
 
+    const handleAccountOptionClick = (option: string) => {
+        if (option === 'signIn') {
+            setIsSignInOpen(true);
+        } else if (option === 'register') {
+            setIsRegisterOpen(true);
+        } else if (option === 'help') {
+            window.open('https://help.example.com', '_blank');
+        }
+        setIsAccountModalOpen(false);
+    };
+
     return (
         <div className="container">
             {/* Fixed Header */}
@@ -118,38 +135,85 @@ function App() {
                     </div>
                     <div className="header-center">
                         <div className={`search-bar ${isSticky ? 'sticky' : 'hidden'}`}>
-                            <div className="search-bar-inner">
+                            <div className="search-bar-inner flex items-center gap-2">
                                 <input
                                     type="text"
                                     placeholder="Search for items to buy, sell, or rent..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="search-input"
+                                    className="search-input w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition duration-200"
                                 />
-                                <button className="search-button">🔍</button>
-                                <button className="filter-button" onClick={() => setIsFilterOpen(true)}>⚙️</button>
+                                <button className="search-button bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500">
+                                    Search
+                                </button>
+                                <button className="filter-button bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500" onClick={() => setIsFilterOpen(true)}>
+                                    Filter
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div className="cta-buttons">
+                    <div className="cta-buttons flex items-center gap-2">
                         <button
-                            className="cta-button post-listing"
+                            className="cta-button post-listing bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500"
                             onClick={() => setIsProductListingOpen(true)}
                         >
                             Post
                         </button>
                         <button
-                            className="cta-button sign-in"
-                            onClick={() => setIsSignInOpen(true)}
+                            className="cta-button account bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500"
+                            onClick={() => setIsAccountModalOpen(true)}
                         >
-                            Sign In
+                            Account
                         </button>
                     </div>
                 </div>
             </div>
 
+            {/* Account Modal */}
+            {isAccountModalOpen && (
+                <div className="modal-overlay fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 transition-opacity duration-500 ease-in-out" onClick={() => setIsAccountModalOpen(false)}>
+                    <div className="modal-content bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-500 ease-in-out scale-95 animate-[fadeIn_0.5s_ease-in-out] max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                        <h2 className="modal-title text-2xl font-bold text-gray-800 mb-6 text-center bg-gradient-to-r from-orange-500 to-amber-600 text-transparent bg-clip-text">
+                            Account Options
+                        </h2>
+                        <div className="account-options flex flex-col gap-4">
+                            <button
+                                className="account-option relative bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 active:bg-amber-300 text-gray-800 font-semibold py-4 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500 group"
+                                onClick={() => handleAccountOptionClick('signIn')}
+                            >
+                                <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                                Existing User
+                            </button>
+                            <button
+                                className="account-option relative bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 active:bg-amber-300 text-gray-800 font-semibold py-4 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500 group"
+                                onClick={() => handleAccountOptionClick('register')}
+                            >
+                                <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                                Register
+                            </button>
+                            <button
+                                className="account-option relative bg-gradient-to-r from-orange-100 to-amber-100 hover:from-orange-200 hover:to-amber-200 active:bg-amber-300 text-gray-800 font-semibold py-4 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500 group"
+                                onClick={() => handleAccountOptionClick('help')}
+                            >
+                                <span className="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                                Help Center
+                            </button>
+                        </div>
+                        <button
+                            className="cta-button close-button mt-6 w-full bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-red-500"
+                            onClick={() => setIsAccountModalOpen(false)}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Sign In Modal */}
             {isSignInOpen && <SignIn onClose={() => setIsSignInOpen(false)} />}
+
+            {/* Register Modal */}
+            {isRegisterOpen && <Register onClose={() => setIsRegisterOpen(false)} />}
 
             {/* Product Listing Modal */}
             {isProductListingOpen && (
@@ -191,14 +255,14 @@ function App() {
                             type="number"
                             value={minPrice}
                             onChange={(e) => setMinPrice(e.target.value)}
-                            placeholder="$ Min"
+                            placeholder="₹ Min"
                         />
                         <label>Max Price</label>
                         <input
                             type="number"
                             value={maxPrice}
                             onChange={(e) => setMaxPrice(e.target.value)}
-                            placeholder="$ Max"
+                            placeholder="₹ Max"
                         />
                         <label>Min Rating</label>
                         <select value={minRating} onChange={(e) => setMinRating(e.target.value)}>
@@ -217,9 +281,11 @@ function App() {
                             <option value="rating_desc">Highest Rated</option>
                             <option value="newest">Newest</option>
                         </select>
-                        <div className="modal-buttons">
-                            <button onClick={() => setIsFilterOpen(false)}>Apply</button>
-                            <button onClick={() => {
+                        <div className="modal-buttons flex gap-2">
+                            <button className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500" onClick={() => setIsFilterOpen(false)}>
+                                Apply
+                            </button>
+                            <button className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500" onClick={() => {
                                 setLocation('');
                                 setAction('');
                                 setSelectedCategory('');
@@ -228,117 +294,134 @@ function App() {
                                 setMinRating('');
                                 setSortBy('');
                                 setIsFilterOpen(false);
-                            }}>Reset</button>
-                            <button onClick={() => setIsFilterOpen(false)}>Close</button>
+                            }}>
+                                Reset
+                            </button>
+                            <button className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500" onClick={() => setIsFilterOpen(false)}>
+                                Close
+                            </button>
                         </div>
                     </div>
                 </div>
             )}
 
             {/* Tagline */}
-            <p className="tagline">
-                Buy. Sell. Rent. Seamlessly.
+            <p className="tagline text-center text-lg text-gray-700 mt-4">
+                Shop, Sell, Rent – Connect Across India
             </p>
 
             {/* Headline */}
-            <h1 className="headline">
-                Everything You Need, Just a Click Away
+            <h1 className="headline text-4xl font-bold text-gray-800 text-center mt-2">
+                Your Marketplace for Everything
             </h1>
 
-            {/* Search Bar (below headline when not sticky) */}
-            <div className={`search-bar ${isSticky ? 'hidden' : ''}`} ref={searchBarRef}>
-                <div className="search-bar-inner">
-                    <input
-                        type="text"
-                        placeholder="Search for items to buy, sell, or rent..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="search-input"
-                    />
-                    <button className="search-button">🔍</button>
-                    <button className="filter-button" onClick={() => setIsFilterOpen(true)}>⚙️</button>
+            {/* Hero Section with Search Bar */}
+            <div className="hero-section relative w-full h-64 bg-cover bg-center mt-6" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)' }}>
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <div className={`search-bar relative z-10 mx-auto w-full max-w-2xl px-4 ${isSticky ? 'hidden' : ''}`} ref={searchBarRef}>
+                    <div className="search-bar-inner flex items-center gap-2">
+                        <input
+                            type="text"
+                            placeholder="Search for items to buy, sell, or rent..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="search-input w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition duration-200"
+                        />
+                        <button className="search-button bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500">
+                            Search
+                        </button>
+                        <button className="filter-button bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500" onClick={() => setIsFilterOpen(true)}>
+                            Filter
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {isFiltered ? (
-                <div className="listings-section">
-                    <h2 className="section-title">Filtered Listings</h2>
-                    <div className="listings-grid">
+                <div className="listings-section mt-8">
+                    <h2 className="section-title text-2xl font-bold text-gray-800 mb-4">Filtered Listings</h2>
+                    <div className="listings-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {filteredListings.map((listing) => (
-                            <div key={listing.id} className="listing-card">
+                            <div key={listing.id} className="listing-card bg-white rounded-lg shadow-md overflow-hidden">
                                 <div className="card-image">
-                                    <img src={listing.image} alt={listing.title} />
-                                    <div className="card-overlay">
-                                        <h2 className="card-title">{listing.title}</h2>
-                                        <p className="card-price">{listing.price}</p>
-                                        <p className="card-location">{listing.location}</p>
+                                    <img src={listing.image} alt={listing.title} className="w-full h-48 object-cover" />
+                                    <div className="card-overlay p-4 bg-gradient-to-t from-black to-transparent">
+                                        <h2 className="card-title text-white text-lg font-semibold">{listing.title}</h2>
+                                        <p className="card-price text-white">{listing.price}</p>
+                                        <p className="card-location text-white">{listing.location}</p>
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    {filteredListings.length === 0 && <p>No listings match your filters.</p>}
+                    {filteredListings.length === 0 && <p className="text-center text-gray-600 mt-4">No listings match your filters.</p>}
                 </div>
             ) : (
                 <>
                     {/* New Listings Section */}
-                    <div className="listings-section">
-                        <h2 className="section-title">New Listings</h2>
-                        <div className="listings-grid">
+                    <div className="listings-section mt-8">
+                        <h2 className="section-title text-2xl font-bold text-gray-800 mb-4">New Listings</h2>
+                        <div className="listings-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {newListings.map((listing) => (
-                                <div key={listing.id} className="listing-card new-listing">
+                                <div key={listing.id} className="listing-card new-listing bg-white rounded-lg shadow-md overflow-hidden">
                                     <div className="card-image">
-                                        <img src={listing.image} alt={listing.title} />
-                                        <div className="card-overlay">
-                                            <h2 className="card-title">{listing.title}</h2>
-                                            <p className="card-price">{listing.price}</p>
-                                            <p className="card-location">{listing.location}</p>
+                                        <img src={listing.image} alt={listing.title} className="w-full h-48 object-cover" />
+                                        <div className="card-overlay p-4 bg-gradient-to-t from-black to-transparent">
+                                            <h2 className="card-title text-white text-lg font-semibold">{listing.title}</h2>
+                                            <p className="card-price text-white">{listing.price}</p>
+                                            <p className="card-location text-white">{listing.location}</p>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <button className="view-more">View More</button>
+                        <button className="view-more mt-4 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500">
+                            View More
+                        </button>
                     </div>
 
                     {/* Highest Rated Listings Section */}
-                    <div className="listings-section">
-                        <h2 className="section-title">Highest Rated Listings</h2>
-                        <div className="listings-grid">
+                    <div className="listings-section mt-8">
+                        <h2 className="section-title text-2xl font-bold text-gray-800 mb-4">Highest Rated Listings</h2>
+                        <div className="listings-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {highRatedListings.map((listing) => (
-                                <div key={listing.id} className="listing-card high-rated">
+                                <div key={listing.id} className="listing-card high-rated bg-white rounded-lg shadow-md overflow-hidden">
                                     <div className="card-image">
-                                        <img src={listing.image} alt={listing.title} />
-                                        <div className="card-overlay">
-                                            <h2 className="card-title">{listing.title}</h2>
-                                            <p className="card-price">{listing.price}</p>
-                                            <p className="card-location">{listing.location}</p>
+                                        <img src={listing.image} alt={listing.title} className="w-full h-48 object-cover" />
+                                        <div className="card-overlay p-4 bg-gradient-to-t from-black to-transparent">
+                                            <h2 className="card-title text-white text-lg font-semibold">{listing.title}</h2>
+                                            <p className="card-price text-white">{listing.price}</p>
+                                            <p className="card-location text-white">{listing.location}</p>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <button className="view-more">View More</button>
+                        <button className="view-more mt-4 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500">
+                            View More
+                        </button>
                     </div>
 
                     {/* Popular Categories This Week */}
-                    <div className="listings-section">
-                        <h2 className="section-title">Popular This Week</h2>
-                        <div className="listings-grid">
+                    <div className="listings-section mt-8">
+                        <h2 className="section-title text-2xl font-bold text-gray-800 mb-4">Popular This Week</h2>
+                        <div className="listings-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {popularListings.map((listing) => (
-                                <div key={listing.id} className="listing-card popular">
+                                <div key={listing.id} className="listing-card popular bg-white rounded-lg shadow-md overflow-hidden">
                                     <div className="card-image">
-                                        <img src={listing.image} alt={listing.title} />
-                                        <div className="card-overlay">
-                                            <h2 className="card-title">{listing.title}</h2>
-                                            <p className="card-price">{listing.price}</p>
-                                            <p className="card-location">{listing.location}</p>
+                                        <img src={listing.image} alt={listing.title} className="w-full h-48 object-cover" />
+                                        <div className="card-overlay p-4 bg-gradient-to-t from-black to-transparent">
+                                            <h2 className="card-title text-white text-lg font-semibold">{listing.title}</h2>
+                                            <p className="card-price text-white">{listing.price}</p>
+                                            <p className="card-location text-white">{listing.location}</p>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <button className="view-more">View More</button>
+                        <button className="view-more mt-4 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-amber-500">
+                            View More
+                        </button>
                     </div>
                 </>
             )}
